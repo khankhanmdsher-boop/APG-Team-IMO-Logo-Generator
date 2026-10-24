@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="hi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APG Team - VIP IMO Logo Generator & Master Panel</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tesseract.js for OCR -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        apgGold: '#FFD700',
+                        apgRed: '#FF2E93',
+                        apgCyan: '#00F0FF',
+                        apgDark: '#0a0a12',
+                        apgCard: '#131326',
+                        apgCardLight: '#1c1c38'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background: radial-gradient(circle at top, #151530 0%, #080810 100%);
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        .neon-border {
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15), inset 0 0 15px rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        .neon-button {
+            background: linear-gradient(135deg, #FF2E93 0%, #FF8A00 100%);
+            box-shadow: 0 4px 20px rgba(255, 46, 147, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .neon-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 46, 147, 0.6);
+        }
+
+        .gold-glow {
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .animate-marquee {
+            display: inline-block;
+            animation: marquee 25s linear infinite;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080810;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF2E93;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="flex flex-col justify-between font-sans selection:bg-apgRed selection:text-white">
+
+    <!-- Top Running Marquee Banner -->
+    <div class="bg-gradient-to-r from-apgRed via-orange-600 to-apgGold text-black font-bold text-xs py-2 px-4 overflow-hidden whitespace-nowrap shadow-md">
+        <div class="animate-marquee tracking-wider">
+            🔥 APG TEAM OFFICIAL VIP LOGO GENERATOR &nbsp;|&nbsp; 👑 Owner: MR FAIZ KHAN &nbsp;|&nbsp; Create Your IMO Styled Logo Free Instantly &nbsp;|&nbsp; Join APG Family Now! 🔥
+        </div>
+    </div>
+
+    <!-- Main Navigation / Header -->
+    <header class="w-full max-w-4xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-full bg-apgCard border border-apgGold/40 flex items-center justify-center shadow-lg">
+                <i class="fa-solid fa-crown text-apgGold text-xl gold-glow"></i>
+            </div>
+            <div>
+                <h1 class="text-xl sm:text-2xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-apgGold via-yellow-200 to-apgCyan">
+                    APG™ TEAM
+                </h1>
+                <p class="text-[11px] text-gray-400">Official IMO Logo Generator & Dashboard</p>
+            </div>
+        </div>
+        <!-- Live Quick Stats Badge -->
+        <div class="flex items-center gap-3 bg-apgCard/80 border border-gray-700/60 px-4 py-2 rounded-full text-xs shadow-inner">
+            <div class="flex items-center gap-1.5 text-apgCyan">
+                <i class="fa-solid fa-users"></i>
+                <span id="badge-total-gen" class="font-bold">0</span> <span class="text-[10px] text-gray-400">Created</span>
+            </div>
+            <span class="text-gray-600">|</span>
+            <div class="flex items-center gap-1.5 text-apgGold">
+                <i class="fa-solid fa-copy"></i>
+                <span id="badge-total-copy" class="font-bold">0</span> <span class="text-[10px] text-gray-400">Copied</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container Wrapper -->
+    <main class="w-full max-w-2xl mx-auto px-4 pb-12 space-y-6">
+
+        <!-- Generator Card Interface -->
+        <div class="bg-apgCard rounded-2xl p-5 sm:p-7 neon-border space-y-6 backdrop-blur-md shadow-2xl relative overflow-hidden">
+            
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-apgCyan/5 rounded-full blur-2xl pointer-events-none"></div>
+
+            <!-- Tabs Selection (Screenshot OCR vs Manual) -->
+            <div class="grid grid-cols-2 gap-2 p-1 bg-black/40 rounded-xl border border-gray-800">
+                <button onclick="switchTab('ocr')" id="tab-ocr-btn" class="py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-apgRed text-white shadow-md">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>📸 Screenshot OCR</span>
+                </button>
+                <button onclick="switchTab('manual')" id="tab-manual-btn" class="py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-keyboard"></i>
+                    <span>⌨️ Manual Input</span>
+                </button>
+            </div>
+
+            <!-- Tab Content 1: Screenshot OCR Upload -->
+            <div id="tab-ocr-content" class="space-y-4">
+                <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                    IMO प्रोफाइल स्क्रीनशॉट अपलोड करें (ऑटो नाम रीडर):
+                </label>
+                <div id="drop-zone" class="border-2 border-dashed border-gray-600 hover:border-apgCyan rounded-xl p-5 text-center cursor-pointer transition-all bg-black/30 flex flex-col items-center justify-center space-y-2 group">
+                    <input type="file" id="file-input" accept="image/*" class="hidden">
+                    <div class="w-12 h-12 bg-gray-800 group-hover:bg-apgCyan/20 rounded-full flex items-center justify-center text-apgCyan text-xl transition-colors">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <p id="upload-text" class="text-xs text-gray-300 font-medium">
+                        यहाँ क्लिक करें या स्क्रीनशॉट ड्रैग करके छोड़ें
+                    </p>
+                    <p class="text-[10px] text-gray-500">AI तुरंत आपका नाम स्कैन कर लेगा</p>
+                </div>
+
+                <!-- OCR Loading Progress Bar -->
+                <div id="ocr-loader" class="hidden space-y-2">
+                    <div class="flex justify-between text-xs text-apgCyan font-medium">
+                        <span id="ocr-status-text">एआई स्क्रीनशॉट से नाम पढ़ रहा है...</span>
+                        <span id="ocr-percent">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-800 rounded-full h-2 overflow-hidden">
+                        <div id="ocr-bar" class="bg-gradient-to-r from-apgCyan to-apgRed h-2 rounded-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <!-- Uploaded Image Preview -->
+                <div id="image-preview-container" class="hidden text-center">
+                    <img id="image-preview" src="" alt="Screenshot" class="max-h-32 mx-auto rounded-lg border border-gray-700 shadow-md">
+                </div>
+            </div>
+
+            <!-- Tab Content 2: Manual Input -->
+            <div id="tab-manual-content" class="space-y-4 hidden">
+                <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                    अपना नाम दर्ज करें:
+                </label>
+                <div class="relative">
+                    <input type="text" id="manual-name-input" value="Amanullah" placeholder="अपना नाम लिखें..." class="w-full bg-black/50 border border-gray-700 focus:border-apgCyan text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors pr-10">
+                    <i class="fa-solid fa-user absolute right-3 top-3.5 text-gray-500 text-sm"></i>
+                </div>
+            </div>
+
+            <!-- Active Name Field Hidden / Controller -->
+            <input type="hidden" id="active-name" value="Amanullah">
+
+            <!-- Live Logo Output Box -->
+            <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                    <label class="block text-xs font-semibold text-apgGold uppercase tracking-wider">
+                        ✨ आपका APG VIP Logo Preview:
+                    </label>
+                    <span class="text-[10px] text-gray-400 bg-black/40 px-2 py-0.5 rounded border border-gray-800">Auto-Generated</span>
+                </div>
+                <div class="relative bg-black/80 rounded-xl p-4 border border-apgGold/40 shadow-inner">
+                    <div id="logo-preview" class="text-xs sm:text-sm font-mono break-all text-white leading-relaxed tracking-wide select-all">
+                        APG™➳⁠²⁰²⁶MD⁠˓⃝Amanullah˓⃝༺❤️༻✺◄❥⃟⫷]♻⃟◎͓̽⃝͓̽❥͓̽͜͡❂ཽ⃟.⃟♻{✮͜͡⃢♪.˓⃝✍APG˓⃝❤️˓⃝✍OWNER: MR FAIZ KHAN༻͓
+                    </div>
+                </div>
+            </div>
+
+            <!-- One-Click Copy Button -->
+            <button onclick="copyLogo()" class="w-full neon-button text-white font-bold py-3.5 rounded-xl flex items-center justify-center space-x-2 text-sm tracking-wider uppercase cursor-pointer">
+                <i class="fa-regular fa-copy text-lg"></i>
+                <span>One-Click Copy Logo</span>
+            </button>
+
+        </div>
+
+        <!-- Realtime Activity Ticker Section -->
+        <div class="bg-apgCard/70 rounded-2xl p-5 border border-gray-800 space-y-3">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold text-apgCyan uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-apgGold"></i> Live Community Activity Feed
+                </h3>
+                <span class="text-[10px] text-gray-400 bg-black/50 px-2 py-0.5 rounded animate-pulse">● Live Stream</span>
+            </div>
+            <div id="activity-feed-list" class="space-y-2 max-h-36 overflow-y-auto pr-1 text-xs">
+                <!-- Dynamically populated activity items -->
+            </div>
+        </div>
+
+        <!-- Trust & Footer Links -->
+        <footer class="pt-4 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-3">
+            <div>
+                © 2026 APG Team. All Rights Reserved. Owner: <span class="text-apgGold font-medium">Mr. Faiz Khan</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="openModal('privacy')" class="hover:text-apgCyan transition-colors">Privacy Policy</button>
+                <span>•</span>
+                <button onclick="openModal('terms')" class="hover:text-apgCyan transition-colors">Terms & Conditions</button>
+                <span>•</span>
+                <button onclick="openModal('about')" class="hover:text-apgCyan transition-colors">About APG</button>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- ============================================== -->
+    <!-- SUPER ADMIN DASHBOARD MODAL / OVERLAY (#admin) -->
+    <!-- ============================================== -->
+    <div id="admin-overlay" class="fixed inset-0 bg-black/90 backdrop-blur-lg z-50 hidden flex flex-col overflow-y-auto p-4 sm:p-6">
+        
+        <!-- Admin Login Container -->
+        <div id="admin-login-box" class="w-full max-w-md mx-auto my-auto bg-apgCard rounded-2xl p-6 neon-border space-y-6 shadow-2xl">
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-apgRed/20 text-apgRed rounded-full mx-auto flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h2 class="text-xl font-bold text-white">Super Admin Master Login</h2>
+                <p class="text-xs text-gray-400">APG Team Authorized Access Only</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Username:</label>
+                    <input type="text" id="admin-user" placeholder="Enter username..." class="w-full bg-black/60 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-apgCyan">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Password:</label>
+                    <input type="password" id="admin-pass" placeholder="Enter password..." class="w-full bg-black/60 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-apgCyan">
+                </div>
+                <button onclick="handleAdminLogin()" class="w-full bg-apgCyan text-black font-bold py-3 rounded-xl hover:bg-cyan-400 transition-colors uppercase text-xs tracking-wider">
+                    Login to Dashboard
+                </button>
+                <button onclick="closeAdminPanel()" class="w-full text-center text-xs text-gray-500 hover:text-gray-300 pt-1">
+                    ← Back to Generator
+                </button>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard Panel -->
+        <div id="admin-dashboard-box" class="w-full max-w-4xl mx-auto my-auto bg-apgCard rounded-2xl p-5 sm:p-8 neon-border space-y-6 shadow-2xl hidden">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+                <div>
+                    <h2 class="text-xl font-extrabold text-apgGold flex items-center gap-2">
+                        <i class="fa-solid fa-gauge-high"></i> APG Master Control Panel
+                    </h2>
+                    <p class="text-xs text-gray-400">Logged in as Super Admin (Mr. Faiz Khan Authorized)</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="exportLogsCSV()" class="bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 px-3 py-2 rounded-lg border border-gray-700 transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-download"></i> Export CSV
+                    </button>
+                    <button onclick="handleAdminLogout()" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 text-xs px-3 py-2 rounded-lg border border-red-500/30 transition-colors">
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Analytics Overview Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-black/40 border border-gray-800 rounded-xl p-4 space-y-1">
+                    <p class="text-xs text-gray-400">Total Generations</p>
+                    <h3 id="admin-stat-gen" class="text-2xl font-bold text-apgCyan">0</h3>
+                </div>
+                <div class="bg-black/40 border border-gray-800 rounded-xl p-4 space-y-1">
+                    <p class="text-xs text-gray-400">Total Clipboard Copies</p>
+                    <h3 id="admin-stat-copy" class="text-2xl font-bold text-apgGold">0</h3>
+                </div>
+                <div class="bg-black/40 border border-gray-800 rounded-xl p-4 space-y-1">
+                    <p class="text-xs text-gray-400">Active System Health</p>
+                    <h3 class="text-xl font-bold text-emerald-400 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span> Optimal
+                    </h3>
+                </div>
+            </div>
+
+            <!-- Detailed Activity Logs Table -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-bold text-gray-300 uppercase tracking-wider">Detailed Generation Logs</h3>
+                    <button onclick="clearLogs()" class="text-[11px] text-red-400 hover:underline">Clear History</button>
+                </div>
+                <div class="bg-black/60 rounded-xl border border-gray-800 overflow-x-auto max-h-72">
+                    <table class="w-full text-left text-xs text-gray-300">
+                        <thead class="bg-gray-900 text-gray-400 uppercase text-[10px]">
+                            <tr>
+                                <th class="p-3">Time</th>
+                                <th class="p-3">User Name</th>
+                                <th class="p-3">Method</th>
+                                <th class="p-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-logs-table" class="divide-y divide-gray-800">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button onclick="closeAdminPanel()" class="text-xs text-apgCyan hover:underline">
+                    ← Close Panel & Return to App
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TRUST MODALS (Privacy, Terms, About)           -->
+    <!-- ============================================== -->
+    <div id="modal-container" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-apgCard max-w-lg w-full rounded-2xl p-6 neon-border space-y-4 shadow-2xl relative max-h-[85vh] overflow-y-auto">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modal-content" class="space-y-3 text-xs text-gray-300 leading-relaxed">
+                <!-- Dynamically filled modal info -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold text-xs px-5 py-3 rounded-full shadow-2xl flex items-center space-x-2 opacity-0 pointer-events-none transition-all duration-300 z-50">
+        <i class="fa-solid fa-circle-check text-base"></i>
+        <span id="toast-text">Logo copied successfully!</span>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- APPLICATION JAVASCRIPT LOGIC                   -->
+    <!-- ============================================== -->
+    <script>
+        // LocalStorage Data Keys
+        const STORAGE_KEY_GEN = 'apg_total_gen';
+        const STORAGE_KEY_COPY = 'apg_total_copy';
+        const STORAGE_KEY_LOGS = 'apg_activity_logs';
+
+        // Initial Sample Activity Logs if empty
+        let activityLogs = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS)) || [
+            { time: 'Just now', name: 'Amanullah', method: 'Screenshot OCR', status: 'Success' },
+            { time: '5 mins ago', name: 'Sahil Khan', method: 'Manual Input', status: 'Success' },
+            { time: '12 mins ago', name: 'Rahul Sharma', method: 'Screenshot OCR', status: 'Success' }
+        ];
+
+        let totalGen = parseInt(localStorage.getItem(STORAGE_KEY_GEN)) || 142;
+        let totalCopy = parseInt(localStorage.getItem(STORAGE_KEY_COPY)) || 389;
+
+        // DOM Elements
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+        const uploadText = document.getElementById('upload-text');
+        const manualNameInput = document.getElementById('manual-name-input');
+        const activeNameField = document.getElementById('active-name');
+        const logoPreview = document.getElementById('logo-preview');
+        const ocrLoader = document.getElementById('ocr-loader');
+        const ocrBar = document.getElementById('ocr-bar');
+        const ocrStatusText = document.getElementById('ocr-status-text');
+        const ocrPercent = document.getElementById('ocr-percent');
+        const imgPreviewContainer = document.getElementById('image-preview-container');
+        const imgPreview = document.getElementById('image-preview');
+
+        // Initialize App Stats
+        function updateStatsDisplay() {
+            document.getElementById('badge-total-gen').textContent = totalGen;
+            document.getElementById('badge-total-copy').textContent = totalCopy;
+            localStorage.setItem(STORAGE_KEY_GEN, totalGen);
+            localStorage.setItem(STORAGE_KEY_COPY, totalCopy);
+            localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(activityLogs));
+            renderActivityFeed();
+        }
+
+        // Tab Switching
+        function switchTab(tab) {
+            const ocrBtn = document.getElementById('tab-ocr-btn');
+            const manualBtn = document.getElementById('tab-manual-btn');
+            const ocrContent = document.getElementById('tab-ocr-content');
+            const manualContent = document.getElementById('tab-manual-content');
+
+            if (tab === 'ocr') {
+                ocrBtn.className = "py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-apgRed text-white shadow-md";
+                manualBtn.className = "py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all text-gray-400 hover:text-white";
+                ocrContent.classList.remove('hidden');
+                manualContent.classList.add('hidden');
+            } else {
+                manualBtn.className = "py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-apgRed text-white shadow-md";
+                ocrBtn.className = "py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all text-gray-400 hover:text-white";
+                manualContent.classList.remove('hidden');
+                ocrContent.classList.add('hidden');
+            }
+        }
+
+        // Logo Generator Formula Builder
+        function generateLogo(name) {
+            const cleanName = name.trim() || 'Amanullah';
+            return `APG™➳⁠²⁰²⁶MD⁠˓⃝${cleanName}˓⃝༺❤️༻✺◄❥⃟⫷]♻⃟◎͓̽⃝͓̽❥͓̽͜͡❂ཽ⃟.⃟♻{✮͜͡⃢♪.˓⃝✍APG˓⃝❤️˓⃝✍OWNER: MR FAIZ KHAN༻͓`;
+        }
+
+        function updateLogoOutput(name, method = 'Manual Input') {
+            activeNameField.value = name;
+            logoPreview.textContent = generateLogo(name);
+            totalGen++;
+            
+            // Add to log
+            activityLogs.unshift({
+                time: 'Just now',
+                name: name,
+                method: method,
+                status: 'Success'
+            });
+            if(activityLogs.length > 25) activityLogs.pop();
+            updateStatsDisplay();
+        }
+
+        manualNameInput.addEventListener('input', (e) => {
+            logoPreview.textContent = generateLogo(e.target.value);
+            activeNameField.value = e.target.value;
+        });
+
+        // Dropzone & File Select
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) handleImage(e.target.files[0]);
+        });
+
+        // OCR Handler
+        function handleImage(file) {
+            if (!file.type.startsWith('image/')) {
+                showToast("कृपया केवल इमेज (Screenshot) ही अपलोड करें!");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imgPreview.src = e.target.result;
+                imgPreviewContainer.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+
+            uploadText.textContent = `फाइल: ${file.name}`;
+            ocrLoader.classList.remove('hidden');
+            ocrBar.style.width = '0%';
+            ocrPercent.textContent = '0%';
+
+            Tesseract.recognize(file, 'eng', {
+                logger: m => {
+                    if (m.status === 'recognizing text') {
+                        const progress = Math.round(m.progress * 100);
+                        ocrBar.style.width = `${progress}%`;
+                        ocrPercent.textContent = `${progress}%`;
+                    }
+                }
+            }).then(({ data: { text } }) => {
+                ocrLoader.classList.add('hidden');
+                const lines = text.split('\n')
+                    .map(l => l.replace(/[^a-zA-Z0-9_\s]/g, '').trim())
+                    .filter(l => l.length >= 2 && l.length <= 20);
+
+                const extractedName = lines.length > 0 ? lines[0] : 'Amanullah';
+                manualNameInput.value = extractedName;
+                updateLogoOutput(extractedName, 'Screenshot OCR');
+                showToast(`सफलतापूर्वक नाम स्कैन हुआ: ${extractedName}`);
+            }).catch(err => {
+                console.error(err);
+                ocrLoader.classList.add('hidden');
+                updateLogoOutput('Amanullah', 'Screenshot OCR (Fallback)');
+                showToast("ऑटो रीडर फेल हुआ, डिफ़ॉल्ट नाम सेट किया गया।");
+            });
+        }
+
+        // Copy Handler
+        function copyLogo() {
+            const logoText = logoPreview.textContent;
+            const tempArea = document.createElement('textarea');
+            tempArea.value = logoText;
+            document.body.appendChild(tempArea);
+            tempArea.select();
+            try {
+                document.execCommand('copy');
+                totalCopy++;
+                updateStatsDisplay();
+                showToast("✨ Logo Copied Successfully! अब IMO में पेस्ट करें।");
+            } catch (err) {
+                showToast("कॉपी करने में त्रुटि हुई!");
+            }
+            document.body.removeChild(tempArea);
+        }
+
+        // Render Activity Feed
+        function renderActivityFeed() {
+            const feedContainer = document.getElementById('activity-feed-list');
+            feedContainer.innerHTML = '';
+            activityLogs.slice(0, 6).forEach(log => {
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between bg-black/40 px-3 py-2 rounded-lg border border-gray-800/60";
+                div.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i>
+                        <span class="text-white font-medium">${log.name}</span>
+                        <span class="text-[10px] text-gray-500">(${log.method})</span>
+                    </div>
+                    <span class="text-[10px] text-gray-400">${log.time}</span>
+                `;
+                feedContainer.appendChild(div);
+            });
+        }
+
+        // Toast Notification
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').textContent = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+                toast.classList.remove('opacity-100');
+            }, 3500);
+        }
+
+        // ==============================================
+        // HASH ROUTER & ADMIN PANEL CONTROLLER
+        // ==============================================
+        function checkAdminRoute() {
+            if (window.location.hash === '#admin') {
+                document.getElementById('admin-overlay').classList.remove('hidden');
+                const isLoggedIn = sessionStorage.getItem('apg_admin_logged') === 'true';
+                if (isLoggedIn) {
+                    showAdminDashboard();
+                } else {
+                    document.getElementById('admin-login-box').classList.remove('hidden');
+                    document.getElementById('admin-dashboard-box').classList.add('hidden');
+                }
+            } else {
+                document.getElementById('admin-overlay').classList.add('hidden');
+            }
+        }
+
+        window.addEventListener('hashchange', checkAdminRoute);
+        window.addEventListener('load', () => {
+            updateStatsDisplay();
+            checkAdminRoute();
+        });
+
+        function handleAdminLogin() {
+            const user = document.getElementById('admin-user').value.trim();
+            const pass = document.getElementById('admin-pass').value.trim();
+
+            if (user === 'khankhmdsher@' && pass === 'khankhmdsher@1') {
+                sessionStorage.setItem('apg_admin_logged', 'true');
+                showAdminDashboard();
+                showToast("सुपर एडमिन लॉगिन सफल!");
+            } else {
+                showToast("गलत यूजरनेम या पासवर्ड!");
+            }
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('admin-login-box').classList.add('hidden');
+            document.getElementById('admin-dashboard-box').classList.remove('hidden');
+            document.getElementById('admin-stat-gen').textContent = totalGen;
+            document.getElementById('admin-stat-copy').textContent = totalCopy;
+            
+            // Populate logs table
+            const tbody = document.getElementById('admin-logs-table');
+            tbody.innerHTML = '';
+            activityLogs.forEach((log, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 text-gray-400">${log.time}</td>
+                    <td class="p-3 font-semibold text-white">${log.name}</td>
+                    <td class="p-3 text-apgCyan">${log.method}</td>
+                    <td class="p-3 text-emerald-400 font-medium">${log.status}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function handleAdminLogout() {
+            sessionStorage.removeItem('apg_admin_logged');
+            window.location.hash = '';
+            showToast("सफलतापूर्वक लॉग आउट हो गए।");
+        }
+
+        function closeAdminPanel() {
+            window.location.hash = '';
+        }
+
+        function clearLogs() {
+            activityLogs = [];
+            totalGen = 0;
+            totalCopy = 0;
+            updateStatsDisplay();
+            showAdminDashboard();
+            showToast("सभी लॉग्स साफ कर दिए गए हैं।");
+        }
+
+        function exportLogsCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Time,UserName,Method,Status\n";
+            activityLogs.forEach(l => {
+                csvContent += `${l.time},${l.name},${l.method},${l.status}\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "apg_team_logo_logs.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("CSV एक्सपोर्ट सफल!");
+        }
+
+        // ==============================================
+        // TRUST MODALS CONTENT
+        // ==============================================
+        function openModal(type) {
+            const modal = document.getElementById('modal-container');
+            const content = document.getElementById('modal-content');
+            modal.classList.remove('hidden');
+
+            if (type === 'privacy') {
+                content.innerHTML = `
+                    <h3 class="text-sm font-bold text-apgGold mb-2">Privacy Policy</h3>
+                    <p>APG Team respects your privacy. All OCR processing for IMO profile screenshots happens entirely inside your browser (Client-Side). We do not store or upload your personal screenshots to any remote server.</p>
+                    <p>Your generated logo names and interaction counts are stored locally on your device to ensure smooth performance.</p>
+                `;
+            } else if (type === 'terms') {
+                content.innerHTML = `
+                    <h3 class="text-sm font-bold text-apgGold mb-2">Terms & Conditions</h3>
+                    <p>1. This tool is officially built for APG Team members under the ownership of Mr. Faiz Khan.</p>
+                    <p>2. Users are free to generate and copy logos for personal use on IMO and other social platforms.</p>
+                    <p>3. Misuse of the branding or admin panel will result in restricted access.</p>
+                `;
+            } else if (type === 'about') {
+                content.innerHTML = `
+                    <h3 class="text-sm font-bold text-apgGold mb-2">About APG Team</h3>
+                    <p><b>APG Team</b> is one of the premier communities on IMO. Founded and managed under the direct leadership of Owner <b>Mr. Faiz Khan</b>.</p>
+                    <p>This web application makes it ultra-easy for all team members to get uniform VIP official branding badges instantly with one click.</p>
+                `;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-container').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
